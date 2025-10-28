@@ -1,0 +1,189 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 20px;
+    line-height: 1.6;
+}
+h1, h2, h3 {
+    color: #333;
+}
+.container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    flex: 1;
+    min-width: 300px;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="datetime-local"],
+input[type="number"],
+select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+label {
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-bottom: -5px;
+}
+button {
+    background-color: #d9534f;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 5px;
+}
+button:hover {
+    background-color: #c9302c;
+}
+
+/* Estilos para listas */
+#listaUsuarios, #listaClientes, #listaEdificacoes, #listaEquipamentos,
+#listaInspecoes, #listaItensInspecionados, #listaNaoConformidades,
+#listaServicos, #listaOrcamentos, #listaOrdensServico {
+    margin-top: 20px;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+    padding: 5px;
+}
+
+/* Estilo para cada item nas listas */
+#listaUsuarios div, #listaClientes div, #listaEdificacoes div, #listaEquipamentos div,
+#listaInspecoes div, #listaItensInspecionados div, #listaNaoConformidades div,
+#listaServicos div, #listaOrcamentos div, #listaOrdensServico div {
+    background: #eee;
+    padding: 8px 10px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+/* Estilos específicos para botões e selects dentro das listas */
+#listaUsuarios div button,
+#listaClientes div button,
+#listaEdificacoes div button,
+#listaEquipamentos div button,
+#listaInspecoes div button,
+#listaItensInspecionados div button,
+#listaNaoConformidades div button,
+#listaServicos div button,
+#listaOrcamentos div button,
+#listaOrdensServico div button, /* Adiciona OS button */
+#listaOrdensServico div select /* Adiciona OS select */ {
+    padding: 3px 8px;
+    font-size: 0.8em;
+    margin-left: 5px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+/* Estilo específico para o select de status da OS na lista */
+#listaOrdensServico div select.select-status-os {
+     background-color: #fff;
+     border: 1px solid #ccc;
+     border-radius: 3px;
+}
+
+
+/* Botão Editar */
+.btn-editar-cliente,
+.btn-editar-usuario,
+.btn-editar-edificacao,
+.btn-editar-equipamento, /* Adicionado */
+.btn-editar-inspecao, /* Adicionado */
+.btn-editar-item, /* Adicionado */
+.btn-editar-nc, /* Adicionado */
+.btn-editar-servico /* Adicionado */ {
+    background-color: #f0ad4e;
+    border: none;
+    color: white;
+}
+.btn-editar-cliente:hover,
+.btn-editar-usuario:hover,
+.btn-editar-edificacao:hover,
+.btn-editar-equipamento:hover, /* Adicionado */
+.btn-editar-inspecao:hover, /* Adicionado */
+.btn-editar-item:hover, /* Adicionado */
+.btn-editar-nc:hover, /* Adicionado */
+.btn-editar-servico:hover /* Adicionado */ {
+    background-color: #ec971f;
+}
+
+/* Botão Excluir / Recusar / Cancelar */
+.btn-excluir-cliente,
+.btn-excluir-usuario,
+.btn-excluir-edificacao,
+.btn-excluir-equipamento, /* Adicionado */
+.btn-excluir-inspecao, /* Adicionado */
+.btn-excluir-item, /* Adicionado */
+.btn-excluir-nc, /* Adicionado */
+.btn-excluir-servico, /* Adicionado */
+.btn-recusar-orcamento, /* Adicionado */
+.btn-excluir-orcamento, /* Adicionado */
+.btn-cancelar-os /* Adicionado */ {
+    background-color: #d9534f;
+    border: none;
+    color: white;
+}
+.btn-excluir-cliente:hover,
+.btn-excluir-usuario:hover,
+.btn-excluir-edificacao:hover,
+.btn-excluir-equipamento:hover, /* Adicionado */
+.btn-excluir-inspecao:hover, /* Adicionado */
+.btn-excluir-item:hover, /* Adicionado */
+.btn-excluir-nc:hover, /* Adicionado */
+.btn-excluir-servico:hover, /* Adicionado */
+.btn-recusar-orcamento:hover, /* Adicionado */
+.btn-excluir-orcamento:hover, /* Adicionado */
+.btn-cancelar-os:hover /* Adicionado */ {
+     background-color: #c9302c;
+}
+
+
+/* Estilo para o Adicionador de Itens de Orçamento */
+.item-adder {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.item-adder select { flex: 3 1 150px; min-width: 150px; }
+.item-adder input { flex: 1 1 60px; min-width: 60px; }
+.item-adder button { flex: 2 1 100px; min-width: 100px; background-color: #5bc0de; margin-top: 0; }
+.item-adder button:hover { background-color: #31b0d5; }
+
+/* Estilo para itens adicionados ao orçamento */
+#orcamentoItensAdicionados div {
+    background-color: #fdfdfd; border: 1px dashed #ccc; padding: 5px 8px;
+    margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center;
+}
+#orcamentoItensAdicionados div button {
+    padding: 1px 5px; font-size: 0.7em; background-color: #aaa; margin-left: 10px;
+}
+#orcamentoItensAdicionados div button:hover { background-color: #888; }
+
+hr { border: none; border-top: 1px solid #eee; margin: 15px 0; }
