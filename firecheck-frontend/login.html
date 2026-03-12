@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>FireCheck - Login</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f4; margin: 0; }
+        .login-card { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 320px; text-align: center; }
+        h2 { color: #333; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        button { width: 100%; padding: 12px; background-color: #d9534f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background 0.2s; }
+        button:hover { background-color: #c9302c; }
+        .error { color: #d9534f; font-size: 0.9em; display: none; margin-bottom: 15px; padding: 10px; background-color: #f9e2e2; border-radius: 4px; }
+        
+        /* Novas classes para a recuperação de senha */
+        .success { color: #3c763d; font-size: 0.9em; display: none; margin-bottom: 15px; padding: 10px; background-color: #dff0d8; border-radius: 4px; }
+        .link-recuperar { display: block; margin-top: 15px; color: #666; font-size: 14px; text-decoration: none; transition: color 0.2s; }
+        .link-recuperar:hover { color: #d9534f; text-decoration: underline; }
+        .btn-secundario { background-color: #5bc0de; margin-top: 10px; }
+        .btn-secundario:hover { background-color: #31b0d5; }
+        #areaEsqueciSenha { display: none; margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h2>FireCheck</h2>
+        <div id="msgErro" class="error"></div>
+        
+        <form id="formLogin">
+            <input type="text" id="login" placeholder="Usuário" required autofocus>
+            <input type="password" id="senha" placeholder="Senha" required>
+            <button type="submit">Entrar</button>
+        </form>
+
+        <a href="#" id="linkEsqueciSenha" class="link-recuperar">Esqueci minha senha</a>
+
+        <div id="areaEsqueciSenha">
+            <h3 style="color: #333; font-size: 16px; margin-top: 0; margin-bottom: 5px; text-align: center;">Recuperar Senha</h3>
+            <p style="font-size: 12px; color: #777; margin-bottom: 15px; text-align: center;">(Exclusivo para Técnicos)</p>
+            
+            <div id="msgReset" class="error"></div>
+            
+            <input type="text" id="resetLogin" placeholder="Seu Usuário" required>
+            <input type="password" id="resetNovaSenha" placeholder="Nova Senha" required>
+            <button type="button" id="btnSalvarSenha" class="btn-secundario">Salvar Nova Senha</button>
+        </div>
+
+    </div>
+
+    <script>
+        const API_URL_LOGIN = 'http://localhost:8080/api/usuarios/login';
+        const API_URL_RESET = 'http://localhost:8080/api/usuarios/esqueci-senha';
+
+        // Lógica de Login Original
+        document.getElementById('formLogin').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const login = document.getElementById('login').value;
+            const senha = document.getElementById('senha').value;
+            const msgErro = document.getElementById('msgErro');
+            const btn = e.target.querySelector('button');
+
+            msgErro.style.display = 'none';
+            btn.disabled = true;
+            btn.textContent = 'Entrando...';
+
+            try {
+                const response = await fetch(API_URL_LOGIN, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ login, senha })
+                });
+
+                if (response.ok) {
+                    const usuario = await response.json();
+                    sessionStorage.setItem('usuarioLogado', JSON.stringify(usuario));
+                    window.location.href = 'index.html';
+                } else {
+                    const textoErro = await response.text();
+                    throw new Error(textoErro || 'Credenciais inválidas');
+                }
+            } catch (error) {
+                msgErro.textContent = error.message.replace('Erro:', '').trim();
+                msgErro.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Entrar';
+            }
+        });
+
+        // Lógica para mostrar/esconder o formulário de recuperar senha
+        document.getElementById('linkEsqueciSenha').addEventListener('click', (e) => {
+            e.preventDefault();
+            const area = document.getElementById('areaEsqueciSenha');
+            area.style.display = area.style.display === 'none' || area.style.display === '' ? 'block' : 'none';
+        });
+
+        // Lógica para Enviar a Nova Senha
+        document.getElementById('btnSalvarSenha').addEventListener('click', async () => {
+            const loginReset = document.getElementById('resetLogin').value;
+            const novaSenha = document.getElementById('resetNovaSenha').value;
+            const msgReset = document.getElementById('msgReset');
+            const btnSalvar = document.getElementById('btnSalvarSenha');
+
+            // Resetando a mensagem
+            msgReset.className = 'error';
+            msgReset.style.display = 'none';
+
+            if (!loginReset || !novaSenha) {
+                msgReset.textContent = 'Preencha usuário e nova senha.';
+                msgReset.style.display = 'block';
+                return;
+            }
+
+            btnSalvar.disabled = true;
+            btnSalvar.textContent = 'Processando...';
+
+            try {
+                const response = await fetch(API_URL_RESET, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ login: loginReset, novaSenha: novaSenha })
+                });
+
+                const textoRetorno = await response.text();
+
+                if (response.ok) {
+                    // Mudando a classe para sucesso (verde)
+                    msgReset.className = 'success';
+                    msgReset.textContent = textoRetorno;
+                    msgReset.style.display = 'block';
+
+                    // Limpa os campos e esconde após 3 segundos
+                    setTimeout(() => {
+                        document.getElementById('areaEsqueciSenha').style.display = 'none';
+                        document.getElementById('resetLogin').value = '';
+                        document.getElementById('resetNovaSenha').value = '';
+                        msgReset.style.display = 'none';
+                    }, 3000);
+                } else {
+                    throw new Error(textoRetorno);
+                }
+            } catch (error) {
+                msgReset.className = 'error';
+                msgReset.textContent = error.message.replace('Erro:', '').trim();
+                msgReset.style.display = 'block';
+            } finally {
+                btnSalvar.disabled = false;
+                btnSalvar.textContent = 'Salvar Nova Senha';
+            }
+        });
+    </script>
+</body>
+</html>
