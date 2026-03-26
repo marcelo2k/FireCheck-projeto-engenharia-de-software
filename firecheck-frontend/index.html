@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FireCheck - Painel de Controle</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>FireCheck - Painel de Controle</h1>
+        <button id="btnLogout">Sair</button>
+    </header>
+
+    <div id="areaAlertas" style="padding: 0 20px; display: none;">
+        <div style="background-color: #ffdddd; border-left: 6px solid #f44336; padding: 15px; margin-top: 20px; border-radius: 4px;">
+            <strong style="color: #a94442;">Atenção! Estoque Baixo:</strong>
+            <ul id="listaAlertasEstoque" style="margin: 5px 0 0 20px; color: #a94442;"></ul>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="dash-card blue"><h3>Clientes Ativos</h3><div class="number" id="dashClientes">-</div></div>
+        <div class="dash-card green"><h3>Técnicos</h3><div class="number" id="dashTecnicos">-</div></div>
+        <div class="dash-card orange"><h3>Orçamentos Pendentes</h3><div class="number" id="dashOrcamentos">-</div></div>
+        <div class="dash-card blue"><h3>OS em Aberto</h3><div class="number" id="dashOS">-</div></div>
+        <div class="dash-card red"><h3>Alertas de Estoque</h3><div class="number" id="dashAlertas">-</div></div>
+    </div>
+
+    <div class="container">
+        
+        <div class="card" id="cardGestaoUsuarios">
+            <h2>1. Usuários (Técnicos)</h2>
+            <form id="formUsuario">
+                <input type="text" id="usuarioNome" placeholder="Nome Completo" required>
+                <input type="text" id="usuarioCpf" placeholder="CPF" required>
+                <input type="email" id="usuarioEmail" placeholder="E-mail" required>
+                <input type="text" id="usuarioTelefone" placeholder="Telefone" required>
+                <input type="text" id="usuarioLogin" placeholder="Login" required>
+                <input type="password" id="usuarioSenha" placeholder="Senha (vazio p/ manter)">
+                <select id="usuarioPerfil" required>
+                    <option value="TECNICO">Técnico</option>
+                    <option value="ADMIN">Administrador</option>
+                </select>
+                <button type="submit">Salvar Usuário</button>
+            </form>
+            <hr>
+            <button id="btnListarUsuarios" style="background-color: #777;">Listar Usuários</button>
+            <div id="listaUsuarios" class="lista-dados"></div>
+        </div>
+
+        <div class="card">
+            <h2>2. Clientes</h2>
+            <form id="formCliente">
+                <input type="text" id="clienteRazao" placeholder="Razão Social" required>
+                <input type="text" id="clienteCnpjCpf" placeholder="CNPJ/CPF" required>
+                <input type="text" id="clienteEndereco" placeholder="Endereço" required>
+                <input type="text" id="clienteTelefone" placeholder="Telefone" required>
+                <input type="text" id="clienteResponsavel" placeholder="Responsável" required>
+                <input type="email" id="clienteEmail" placeholder="E-mail" required>
+                <button type="submit">Salvar Cliente</button>
+            </form>
+            <hr>
+            <button id="btnListarClientes" style="background-color: #777;">Listar Clientes</button>
+            <div id="listaClientes" class="lista-dados"></div>
+        </div>
+        
+        <div class="card">
+            <h2>3. Edificações</h2>
+            <form id="formEdificacao">
+                <select id="edificacaoClienteId" required><option value="">Carregando clientes...</option></select>
+                <input type="text" id="edificacaoNome" placeholder="Nome (Ex: Matriz)" required>
+                <input type="text" id="edificacaoEndereco" placeholder="Endereço" required>
+                <input type="text" id="edificacaoCep" placeholder="CEP" required>
+                <button type="submit">Salvar Edificação</button>
+            </form>
+            <hr>
+            <button id="btnListarEdificacoes" style="background-color: #777;">Listar Edificações</button>
+            <div id="listaEdificacoes" class="lista-dados"></div>
+        </div>
+
+        <div class="card">
+            <h2>4. Equipamentos</h2>
+            <form id="formEquipamento">
+                <select id="equipamentoEdificacaoId" required><option value="">Carregando edificações...</option></select>
+                <input type="text" id="equipamentoTipo" placeholder="Tipo (Ex: Extintor PQS)" required>
+                <input type="text" id="equipamentoLocal" placeholder="Localização" required>
+                <label for="equipamentoFab">Fabricação:</label>
+                <input type="date" id="equipamentoFab" required>
+                <label for="equipamentoVal">Validade:</label>
+                <input type="date" id="equipamentoVal" required>
+                <button type="submit">Salvar Equipamento</button>
+            </form>
+            <hr>
+            <button id="btnListarEquipamentos" style="background-color: #777;">Listar Equipamentos</button>
+            <div id="listaEquipamentos" class="lista-dados"></div>
+        </div>
+
+        <div class="card">
+            <h2>5. Inspeções</h2>
+            <form id="formInspecao">
+                <label>Data/Hora:</label>
+                <input type="datetime-local" id="inspecaoData" required>
+                <select id="inspecaoEdificacaoId" required><option value="">Carregando edificações...</option></select>
+                <select id="inspecaoTecnicoId" required><option value="">Carregando técnicos...</option></select>
+                <select id="inspecaoStatus" required>
+                    <option value="Agendada">Agendada</option>
+                    <option value="Em andamento">Em andamento</option>
+                    <option value="Concluída">Concluída</option>
+                </select>
+                <button type="submit">Salvar Inspeção</button>
+            </form>
+            <hr>
+            <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                <button id="btnListarInspecoes" style="flex: 2; background-color: #777;">Listar</button>
+                <button id="btnRelatorioInspecoes" class="btn-pdf" style="flex: 1;">PDF</button>
+                <button id="btnRelatorioInspecoesExcel" class="btn-excel" style="flex: 1;">Excel</button>
+            </div>
+            <div id="listaInspecoes" class="lista-dados"></div>
+        </div>
+
+        <div class="card">
+            <h2>6. Itens da Inspeção</h2>
+            <form id="formItemInspecionado">
+                <select id="itemInspecaoId" required><option value="">Carregando inspeções...</option></select>
+                <select id="itemEquipamentoId" required><option value="">Carregando equipamentos...</option></select>
+                <select id="itemStatusGeral" required>
+                    <option value="Conforme">Conforme</option>
+                    <option value="Não Conforme">Não Conforme</option>
+                </select>
+                <input type="text" id="itemObservacoes" placeholder="Observações (Opcional)">
+                <button type="submit">Registrar Item</button>
+            </form>
+            <hr>
+            <label>Filtrar por Inspeção:</label>
+            <select id="filtroInspecaoId"></select>
+            <button type="button" id="btnListarItens" style="background-color: #777;">Ver Itens</button>
+            <div id="listaItensInspecionados" class="lista-dados"></div>
+        </div>
+
+        <div class="card">
+            <h2>7. Não Conformidades</h2>
+            <form id="formNaoConformidade">
+                <select id="ncInspecaoId" required><option value="">Carregando inspeções...</option></select>
+                <select id="ncEquipamentoId" required><option value="">Carregando equipamentos...</option></select>
+                <input type="text" id="ncDescricao" placeholder="Descrição do Problema" required>
+                <input type="text" id="ncFotoUrl" placeholder="URL da Foto (Opcional)">
+                <button type="submit">Registrar Problema</button>
+            </form>
+            <hr>
+            <label>Filtrar por Inspeção:</label>
+            <select id="filtroNCInspecaoId"></select>
+            <button type="button" id="btnListarNC" style="background-color: #777;">Ver Problemas</button>
+            <div id="listaNaoConformidades" class="lista-dados"></div>
+        </div>
+
+        <div class="card" id="cardGestaoServicos">
+            <h2>8. Catálogo de Serviços</h2>
+            <form id="formServico">
+                <input type="text" id="servicoNome" placeholder="Nome (Ex: Recarga PQS)" required>
+                <input type="text" id="servicoDescricao" placeholder="Descrição">
+                <div style="display: flex; gap: 10px;">
+                     <input type="number" id="servicoValor" placeholder="Valor R$" step="0.01" required>
+                     <input type="number" id="servicoTempo" placeholder="Horas" step="0.5">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <input type="number" id="servicoEstoque" placeholder="Estoque Atual" step="1">
+                    <input type="number" id="servicoEstoqueMinimo" placeholder="Estoque Mín." step="1">
+                </div>
+                <button type="submit">Salvar Serviço</button>
+            </form>
+            <hr>
+            <button id="btnListarServicos" style="background-color: #777;">Listar Catálogo</button>
+            <div id="listaServicos" class="lista-dados"></div>
+        </div>
+
+        <div class="card">
+            <h2>9. Gerar Orçamento</h2>
+            <form id="formOrcamento">
+                <select id="orcamentoEdificacaoId" required><option value="">Carregando edificações...</option></select>
+                <select id="orcamentoUsuarioId" required><option value="">Carregando técnicos...</option></select>
+                <label>Validade:</label>
+                <input type="date" id="orcamentoValidade" required>
+                <hr>
+                <h4>Adicionar Itens:</h4>
+                <div class="item-adder">
+                    <select id="orcamentoServicoId"><option value="">Carregando serviços...</option></select>
+                    <input type="number" id="orcamentoItemQtd" placeholder="Qtd" min="1" value="1">
+                    <button type="button" id="btnAdicionarItemOrcamento">Add</button>
+                </div>
+                <div id="orcamentoItensAdicionados" style="margin-top: 10px;"></div>
+                <hr>
+                <button type="submit">Gerar Orçamento</button>
+            </form>
+            <hr>
+            <button type="button" id="btnListarOrcamentos" style="background-color: #777;">Listar Orçamentos</button>
+            <div id="listaOrcamentos" class="lista-dados"></div>
+        </div>
+
+        <div class="card">
+            <h2>10. Ordens de Serviço (OS)</h2>
+            <form id="formAprovarOrcamento">
+                <h3>Aprovar Orçamento</h3>
+                <select id="aprovarOrcamentoId" required><option value="">Carregando pendentes...</option></select>
+                <label>Execução Prevista:</label>
+                <input type="date" id="osDataExecucao" required>
+                <button type="submit">Gerar OS</button>
+            </form>
+            <hr>
+            <button type="button" id="btnListarOS" style="background-color: #777;">Listar OS</button>
+            <div id="listaOrdensServico" class="lista-dados"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
