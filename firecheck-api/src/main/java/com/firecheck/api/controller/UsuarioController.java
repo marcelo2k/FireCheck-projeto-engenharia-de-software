@@ -1,0 +1,116 @@
+package com.firecheck.api.controller;
+
+import com.firecheck.api.model.Usuario;
+import com.firecheck.api.service.UsuarioService;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/usuarios")
+@CrossOrigin(origins = "*")
+public class UsuarioController {
+
+    @Autowired
+    private UsuarioService usuarioService;
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> credenciais) {
+        try {
+            String login = credenciais.get("login");
+            String senha = credenciais.get("senha");
+            Usuario usuario = usuarioService.autenticar(login, senha);
+            return ResponseEntity.ok(usuario);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(401).body(e.getMessage()); 
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Erro interno: " + e.getMessage());
+        }
+    }
+
+    // --- NOVO PASSO 1: SOLICITAR O CÓDIGO POR E-MAIL ---
+    @PostMapping("/solicitar-codigo")
+    public ResponseEntity<?> solicitarCodigo(@RequestBody Map<String, String> dados) {
+        try {
+            String login = dados.get("login");
+            if (login == null || login.isEmpty()) {
+                return ResponseEntity.badRequest().body("O login é obrigatório.");
+            }
+            
+            usuarioService.solicitarCodigoReset(login);
+            return ResponseEntity.ok("Código de verificação enviado para o seu e-mail!");
+            
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Erro ao enviar e-mail: " + e.getMessage());
+        }
+    }
+
+    // --- NOVO PASSO 2: VALIDAR O CÓDIGO E SALVAR A NOVA SENHA ---
+    @PostMapping("/esqueci-senha")
+    public ResponseEntity<?> esqueciSenha(@RequestBody Map<String, String> dados) {
+        try {
+            String login = dados.get("login");
+            String codigo = dados.get("codigo");
+            String novaSenha = dados.get("novaSenha");
+            
+            if (login == null || codigo == null || novaSenha == null) {
+                return ResponseEntity.badRequest().body("Login, código e nova senha são obrigatórios.");
+            }
+
+            usuarioService.redefinirSenhaComCodigo(login, codigo, novaSenha);
+            return ResponseEntity.ok("Senha alterada com sucesso!");
+            
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage()); 
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Erro interno: " + e.getMessage());
+        }
+    }
+
+    // --- ENDPOINTS CRUD PADRÃO ---
+    @PostMapping
+    public ResponseEntity<String> cadastrarUsuario(@RequestBody Usuario usuario) {
+         try {
+             String resultado = usuarioService.cadastrarUsuario(usuario);
+             if (resultado.startsWith("Erro:")) return ResponseEntity.badRequest().body(resultado);
+             return ResponseEntity.ok(resultado);
+         } catch (Exception e) { return ResponseEntity.internalServerError().body("Erro inesperado."); }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Usuario>> listarUsuarios() {
+        return ResponseEntity.ok(usuarioService.listarUsuarios());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Usuario> buscarUsuarioPorId(@PathVariable Long id) {
+         try { return ResponseEntity.ok(usuarioService.buscarUsuarioPorId(id)); } 
+         catch (EntityNotFoundException e) { return ResponseEntity.notFound().build(); }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> atualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuarioAtualizado) {
+        try {
+            usuarioAtualizado.setSenha(null);
+            Usuario usuarioSalvo = usuarioService.atualizarUsuario(id, usuarioAtualizado);
+            return ResponseEntity.ok(usuarioSalvo);
+        } catch (EntityNotFoundException e) { return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) { return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) { return ResponseEntity.internalServerError().body("Erro inesperado."); }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletarUsuario(@PathVariable Long id) {
+        try {
+            usuarioService.deletarUsuario(id);
+            return ResponseEntity.noContent().build();
+        } catch (EntityNotFoundException e) { return ResponseEntity.notFound().build();
+        } catch (IllegalStateException e) { return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) { return ResponseEntity.internalServerError().body("Erro inesperado."); }
+    }
+}

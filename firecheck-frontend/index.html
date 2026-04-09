@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FireCheck - Gestão Profissional</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🔥 FireCheck</h2>
+                <span style="font-size: 12px; color: #94a3b8;">Sistema de Gestão</span>
+            </div>
+            <nav class="sidebar-menu">
+                <button id="btnMenuDashboard" onclick="abrirModulo('tela-dashboard', this)" class="active">📊 Visão Geral</button>
+                <button onclick="abrirModulo('tela-usuarios', this)">👥 Usuários / Técnicos</button>
+                <button onclick="abrirModulo('tela-clientes', this)">🏢 Clientes</button>
+                <button onclick="abrirModulo('tela-edificacoes', this)">🏠 Edificações</button>
+                <button onclick="abrirModulo('tela-equipamentos', this)">🧯 Equipamentos</button>
+                <button onclick="abrirModulo('tela-inspecoes', this)">📋 Inspeções</button>
+                <button onclick="abrirModulo('tela-itens', this)">✅ Itens Inspecionados</button>
+                <button onclick="abrirModulo('tela-nc', this)">❌ Não Conformidades</button>
+                <button onclick="abrirModulo('tela-servicos', this)">🛠️ Catálogo de Serviços</button>
+                <button onclick="abrirModulo('tela-orcamentos', this)">💰 Orçamentos</button>
+                <button onclick="abrirModulo('tela-os', this)">⚙️ Ordens de Serviço</button>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            
+            <div class="top-bar">
+                <a href="site.html" target="_blank" class="btn-ver-site">🌐 Ver Site Público</a>
+                <button id="btnLogout" class="btn-sair">Sair do Sistema</button>
+            </div>
+
+            <div id="areaAlertas" style="padding: 0; display: none;">
+                <div style="background-color: #ffdddd; border-left: 6px solid #f44336; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+                    <strong style="color: #a94442;">⚠️ Atenção! Estoque Baixo:</strong>
+                    <ul id="listaAlertasEstoque" style="margin: 5px 0 0 20px; color: #a94442;"></ul>
+                </div>
+            </div>
+
+            <div id="tela-dashboard" class="modulo-tela" style="display: block;">
+                <h2>Visão Geral do Sistema</h2>
+                <div class="dashboard-container">
+                    <div class="dash-card blue"><h3>Clientes Ativos</h3><div class="number" id="dashClientes">-</div></div>
+                    <div class="dash-card green"><h3>Técnicos</h3><div class="number" id="dashTecnicos">-</div></div>
+                    <div class="dash-card blue"><h3>Edificações</h3><div class="number" id="dashEdificacoes">-</div></div>
+                    <div class="dash-card red"><h3>Equipamentos</h3><div class="number" id="dashEquipamentos">-</div></div>
+                    <div class="dash-card orange"><h3>Orçamentos</h3><div class="number" id="dashOrcamentos">-</div></div>
+                    <div class="dash-card blue"><h3>OS Abertas</h3><div class="number" id="dashOS">-</div></div>
+                    <div class="dash-card red"><h3>Alertas Estoque</h3><div class="number" id="dashAlertas">-</div></div>
+                </div>
+            </div>
+
+            <div id="tela-usuarios" class="modulo-tela">
+                <div class="card" id="cardGestaoUsuarios">
+                    <h2>Gestão de Usuários e Técnicos</h2>
+                    <form id="formUsuario">
+                        <input type="text" id="usuarioNome" placeholder="Nome Completo" required>
+                        <input type="text" id="usuarioCpf" placeholder="CPF" required>
+                        <input type="email" id="usuarioEmail" placeholder="E-mail" required>
+                        <input type="text" id="usuarioTelefone" placeholder="Telefone" required>
+                        <input type="text" id="usuarioLogin" placeholder="Login" required>
+                        <input type="password" id="usuarioSenha" placeholder="Senha (vazio p/ manter)">
+                        <select id="usuarioPerfil" required>
+                            <option value="TECNICO">Técnico</option>
+                            <option value="ADMIN">Administrador</option>
+                        </select>
+                        <button type="submit">Salvar Usuário</button>
+                    </form>
+                    <hr>
+                    <button id="btnListarUsuarios" style="background-color: #777;">Atualizar Lista</button>
+                    <div id="listaUsuarios" class="lista-dados"></div>
+                </div>
+            </div>
+
+            <div id="tela-clientes" class="modulo-tela">
+                <div class="card">
+                    <h2>Gestão de Clientes</h2>
+                    <form id="formCliente">
+                        <input type="text" id="clienteRazao" placeholder="Razão Social" required>
+                        <input type="text" id="clienteCnpjCpf" placeholder="CNPJ/CPF" required>
+                        <input type="text" id="clienteEndereco" placeholder="Endereço Completo" required>
+                        <input type="text" id="clienteTelefone" placeholder="Telefone" required>
+                        <input type="text" id="clienteResponsavel" placeholder="Responsável" required>
+                        <input type="email" id="clienteEmail" placeholder="E-mail" required>
+                        <button type="submit">Salvar Cliente</button>
+                    </form>
+                    <hr>
+                    <button id="btnListarClientes" style="background-color: #777;">Atualizar Lista</button>
+                    <div id="listaClientes" class="lista-dados"></div>
+                </div>
+            </div>
+
+            <div id="tela-edificacoes" class="modulo-tela">
+                <div class="card">
+                    <h2>Edificações Vinculadas</h2>
+                    <form id="formEdificacao">
+                        <select id="edificacaoClienteId" required><option value="">Carregando clientes...</option></select>
+                        <input type="text" id="edificacaoNome" placeholder="Nome do Local (Ex: Matriz, Galpão B)" required>
+                        <input type="text" id="edificacaoEndereco" placeholder="Endereço da Edificação" required>
+                        <input type="text" id="edificacaoCep" placeholder="CEP" required>
+                        <button type="submit">Salvar Edificação</button>
+                    </form>
+                    <hr>
+                    <button id="btnListarEdificacoes" style="background-color: #777;">Atualizar Lista</button>
+                    <div id="listaEdificacoes" class="lista-dados"></div>
+                </div>
+            </div>
+
+            <div id="tela-equipamentos" class="modulo-tela">
+                <div class="card">
+                    <h2>Cadastro de Equipamentos (Extintores, Mangueiras)</h2>
+                    <form id="formEquipamento">
+                        <select id="equipamentoEdificacaoId" required><option value="">Carregando edificações...</option></select>
+                        <input type="text" id="equipamentoTipo" placeholder="Tipo (Ex: Extintor PQS 4kg)" required>
+                        <input type="text" id="equipamentoLocal" placeholder="Localização (Ex: Corredor Térreo)" required>
+                        <label for="equipamentoFab">Data de Fabricação:</label>
+                        <input type="date" id="equipamentoFab" required>
+                        <label for="equipamentoVal">Data de Validade:</label>
+                        <input type="date" id="equipamentoVal" required>
+                        <button type="submit">Salvar Equipamento</button>
+                    </form>
+                    <hr>
+                    <button id="btnListarEquipamentos" style="background-color: #777;">Atualizar Lista</button>
+                    <div id="listaEquipamentos" class="lista-dados"></div>
+                </div>
+            </div>
+
+            <div id="tela-inspecoes" class="modulo-tela">
+                <div class="card">
+                    <h2>Agendamento de Inspeções</h2>
+                    <form id="formInspecao">
+                        <label>Data e Hora da Inspeção:</label>
+                        <input type="datetime-local" id="inspecaoData" required>
+                        <select id="inspecaoEdificacaoId" required><option value="">Carregando edificações...</option></select>
+                        <select id="inspecaoTecnicoId" required><option value="">Carregando técnicos...</option></select>
+                        <select id="inspecaoStatus" required>
+                            <option value="Agendada">Agendada</option>
+                            <option value="Em andamento">Em andamento</option>
+                            <option value="Concluída">Concluída</option>
+                        </select>
+                        <button type="submit">Salvar Inspeção</button>
+                    </form>
+                    <hr>
+                    <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                        <button id="btnListarInspecoes" style="flex: 2; background-color: #777;">Listar Inspeções</button>
+                        <button id="btnRelatorioInspecoes" class="btn-pdf" style="flex: 1;">Gerar PDF</button>
+                        <button id="btnRelatorioInspecoesExcel" class="btn-excel" style="flex: 1;">Gerar Excel</button>
+                    </div>
+                    <div id="listaInspecoes" class="lista-dados"></div>
+                </div>
+            </div>
+
+            <div id="tela-itens" class="modulo-tela">
+                <div class="card">
+                    <h2>Registrar Itens da Inspeção</h2>
+                    <form id="formItemInspecionado">
+                        <select id="itemInspecaoId" required><option value="">Carregando inspeções...</option></select>
+                        <select id="itemEquipamentoId" required><option value="">Carregando equipamentos...</option></select>
+                        <select id="itemStatusGeral" required>
+                            <option value="Conforme">✅ Conforme (Em ordem)</option>
+                            <option value="Não Conforme">❌ Não Conforme (Necessita reparo)</option>
+                        </select>
+                        <input type="text" id="itemObservacoes" placeholder="Observações (Opcional)">
+                        <button type="submit">Registrar Item</button>
+                    </form>
+                    <hr>
+                    <label>Ver resultados por Inspeção:</label>
+                    <select id="filtroInspecaoId"></select>
+                    <button type="button" id="btnListarItens" style="background-color: #777; width: 100%; margin-top: 10px;">Ver Itens</button>
+                    <div id="listaItensInspecionados" class="lista-dados"></div>
+                </div>
+            </div>
+
+            <div id="tela-nc" class="modulo-tela">
+                <div class="card">
+                    <h2>Registro de Não Conformidades (Problemas)</h2>
+                    <form id="formNaoConformidade">
+                        <select id="ncInspecaoId" required><option value="">Carregando inspeções...</option></select>
+                        <select id="ncEquipamentoId" required><option value="">Carregando equipamentos...</option></select>
+                        <input type="text" id="ncDescricao" placeholder="Descreva o problema (Ex: Lacre rompido)" required>
+                        <input type="text" id="ncFotoUrl" placeholder="URL da Foto (Opcional)">
+                        <button type="submit">Registrar Problema</button>
+                    </form>
+                    <hr>
+                    <label>Ver problemas por Inspeção:</label>
+                    <select id="filtroNCInspecaoId"></select>
+                    <button type="button" id="btnListarNC" style="background-color: #777; width: 100%; margin-top: 10px;">Ver Problemas</button>
+                    <div id="listaNaoConformidades" class="lista-dados"></div>
+                </div>
+            </div>
+
+            <div id="tela-servicos" class="modulo-tela">
+                <div class="card" id="cardGestaoServicos">
+                    <h2>Catálogo de Produtos e Serviços</h2>
+                    <form id="formServico">
+                        <input type="text" id="servicoNome" placeholder="Nome (Ex: Recarga PQS 4kg, Mangueira Tipo 2)" required>
+                        <input type="text" id="servicoDescricao" placeholder="Descrição detalhada do serviço/produto">
+                        <div style="display: flex; gap: 10px;">
+                             <input type="number" id="servicoValor" placeholder="Valor R$" step="0.01" required>
+                             <input type="number" id="servicoTempo" placeholder="Horas Previstas" step="0.5">
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <input type="number" id="servicoEstoque" placeholder="Estoque Atual" step="1">
+                            <input type="number" id="servicoEstoqueMinimo" placeholder="Estoque Mínimo de Alerta" step="1">
+                        </div>
+                        <button type="submit" style="margin-top: 15px;">Salvar no Catálogo</button>
+                    </form>
+                    <hr>
+                    <button id="btnListarServicos" style="background-color: #777;">Ver Catálogo Completo</button>
+                    <div id="listaServicos" class="lista-dados"></div>
+                </div>
+            </div>
+
+            <div id="tela-orcamentos" class="modulo-tela">
+                <div class="card">
+                    <h2>Geração de Orçamentos</h2>
+                    <form id="formOrcamento">
+                        <select id="orcamentoEdificacaoId" required><option value="">Carregando edificações...</option></select>
+                        <select id="orcamentoUsuarioId" required><option value="">Carregando técnicos responsáveis...</option></select>
+                        <label>Validade do Orçamento:</label>
+                        <input type="date" id="orcamentoValidade" required>
+                        <hr>
+                        <h4>Adicionar Serviços ao Orçamento:</h4>
+                        <div class="item-adder">
+                            <select id="orcamentoServicoId" style="flex: 2;"><option value="">Carregando serviços...</option></select>
+                            <input type="number" id="orcamentoItemQtd" placeholder="Qtd" min="1" value="1" style="flex: 1;">
+                            <button type="button" id="btnAdicionarItemOrcamento" style="flex: 1;">Adicionar Serviço</button>
+                        </div>
+                        <div id="orcamentoItensAdicionados" style="margin-top: 10px; background: #eee; border-radius: 4px;"></div>
+                        <hr>
+                        <button type="submit">Gerar Orçamento Final</button>
+                    </form>
+                    <hr>
+                    <button type="button" id="btnListarOrcamentos" style="background-color: #777;">Atualizar Lista de Orçamentos</button>
+                    <div id="listaOrcamentos" class="lista-dados"></div>
+                </div>
+            </div>
+
+            <div id="tela-os" class="modulo-tela">
+                <div class="card">
+                    <h2>Ordens de Serviço (OS)</h2>
+                    <form id="formAprovarOrcamento">
+                        <h3>Aprovar Orçamento e Gerar OS</h3>
+                        <select id="aprovarOrcamentoId" required><option value="">Carregando orçamentos pendentes...</option></select>
+                        <label>Data de Execução Prevista:</label>
+                        <input type="date" id="osDataExecucao" required>
+                        <button type="submit">Aprovar e Gerar OS</button>
+                    </form>
+                    <hr>
+                    <button type="button" id="btnListarOS" style="background-color: #777;">Acompanhar Ordens de Serviço</button>
+                    <div id="listaOrdensServico" class="lista-dados"></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
